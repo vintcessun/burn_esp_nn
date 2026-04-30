@@ -1,0 +1,5 @@
+#:schema .vscode/rust-toolchain.schema.json
+
+[toolchain]
+channel = "esp"
+components = ["rust-src", "rustfmt", "clippy"]

@@ -1,0 +1,3 @@
+[workspace]
+resolver = "2"
+members = ["crates/esp_nn_sys", "crates/burn_esp_nn"]

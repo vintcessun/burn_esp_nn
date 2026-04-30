@@ -1,0 +1,13 @@
+{
+  "rust-analyzer.check.command": "clippy",
+  "rust-analyzer.cargo.allTargets": false,
+  "rust-analyzer.check.allTargets": false,
+  "rust-analyzer.cargo.features": "all",
+  "rust-analyzer.linkedProjects": [
+    "Cargo.toml"
+  ],
+  "rust-analyzer.cargo.buildScripts.enable": true,
+  "evenBetterToml.schema.associations": {
+    "rust-toolchain.toml": ".vscode/rust-toolchain.schema.json"
+  }
+}
