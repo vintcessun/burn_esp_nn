@@ -1,0 +1,6 @@
+[package]
+name = "burn_esp_nn"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
