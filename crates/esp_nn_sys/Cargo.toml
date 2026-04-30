@@ -1,0 +1,20 @@
+[package]
+name = "esp_nn_sys"
+version = "0.1.0"
+edition = "2024"
+links = "esp_nn"
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.72.1"
+cc = "1.2.61"
+
+[features]
+default = []
+ansi = []
+esp32s3 = []
+esp32p4 = []
