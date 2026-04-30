@@ -1,0 +1,3 @@
+[submodule "vendor/esp-nn"]
+	path = vendor/esp-nn
+	url = https://github.com/espressif/esp-nn.git
