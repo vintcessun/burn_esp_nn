@@ -12,6 +12,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "amber_esp_nn"
+version = "0.1.0"
+
+[[package]]
 name = "bindgen"
 version = "0.72.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -36,10 +40,6 @@ name = "bitflags"
 version = "2.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4512299f36f043ab09a583e57bceb5a5aab7a73db1805848e8fef3c9e8c78b3"
-
-[[package]]
-name = "burn_esp_nn"
-version = "0.1.0"
 
 [[package]]
 name = "cc"

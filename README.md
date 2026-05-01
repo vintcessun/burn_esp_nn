@@ -1,15 +1,14 @@
-# burn_esp_nn
+# ember-esp-nn
 
-Rust bindings and integration work for [Espressif ESP-NN](https://github.com/espressif/esp-nn).
+ESP-NN-backed inference components for Ember on Espressif targets.
 
-This workspace currently contains a working `no_std` sys crate, `esp_nn_sys`, which generates Rust FFI bindings for ESP-NN and compiles the matching ESP-NN C/assembly sources for selected ESP targets. The higher-level `burn_esp_nn` crate is reserved for the safe Burn integration layer.
+This repository focuses on the backend inference layer that uses [Espressif ESP-NN](https://github.com/espressif/esp-nn). The `esp_nn_sys` crate is the raw `no_std` binding layer: it generates Rust FFI bindings for ESP-NN, compiles the matching ESP-NN C/assembly sources for selected ESP targets, and exposes the raw ESP-NN symbols to higher-level inference code.
 
 ## Workspace Layout
 
 ```text
 crates/
   esp_nn_sys/     Raw FFI bindings and native ESP-NN build script
-  burn_esp_nn/    Future safe integration layer for Burn
 ```
 
 `esp_nn_sys` vendors ESP-NN as a git submodule at:
@@ -25,7 +24,7 @@ crates/esp_nn_sys/vendor/esp-nn
 - The crate is `#![no_std]`.
 - ANSI, ESP32-S3, and ESP32-P4 source selections are supported.
 - The final native link is carried through Cargo metadata from the sys crate to downstream binaries.
-- `burn_esp_nn` does not expose a high-level API yet.
+- `esp_nn_sys` is responsible for ESP-NN bindings; higher-level backend inference components should build on top of it.
 
 ## Supported Backends
 
@@ -52,7 +51,7 @@ If no feature is selected, `esp_nn_sys` builds the ANSI source set.
 Clone with submodules:
 
 ```powershell
-git clone --recurse-submodules https://github.com/vintcessun/burn_esp_nn.git
+git clone --recurse-submodules https://github.com/vintcessun/ember-esp-nn.git
 ```
 
 For an existing clone:
