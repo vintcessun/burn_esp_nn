@@ -199,10 +199,14 @@ fn generate_bindings(include_dir: &Path, common_dir: &Path, chip: Chip) {
 
     match chip {
         Chip::Esp32s3 => {
-            builder = builder.clang_arg("-DCONFIG_IDF_TARGET_ESP32S3=1");
+            builder = builder
+                .clang_arg("-DCONFIG_IDF_TARGET_ESP32S3=1")
+                .clang_arg("-DCONFIG_NN_OPTIMIZED");
         }
         Chip::Esp32p4 => {
-            builder = builder.clang_arg("-DCONFIG_IDF_TARGET_ESP32P4=1");
+            builder = builder
+                .clang_arg("-DCONFIG_IDF_TARGET_ESP32P4=1")
+                .clang_arg("-DCONFIG_NN_OPTIMIZED");
         }
         Chip::Ansi => {}
     }

@@ -2,12 +2,13 @@
 
 ESP-NN-backed inference components for Ember on Espressif targets.
 
-This repository focuses on the backend inference layer that uses [Espressif ESP-NN](https://github.com/espressif/esp-nn). The `esp_nn_sys` crate is the raw `no_std` binding layer: it generates Rust FFI bindings for ESP-NN, compiles the matching ESP-NN C/assembly sources for selected ESP targets, and exposes the raw ESP-NN symbols to higher-level inference code.
+This repository focuses on the backend inference layer that uses [Espressif ESP-NN](https://github.com/espressif/esp-nn). The `esp_nn_sys` crate is the raw `no_std` binding layer: it generates Rust FFI bindings for ESP-NN, compiles the matching ESP-NN C/assembly sources for selected ESP targets, and exposes the raw ESP-NN symbols to higher-level inference code. The `ember_esp_nn` crate is the higher-level Ember backend crate that implements `ember_infer_core::KernelBackend` on top of those bindings.
 
 ## Workspace Layout
 
 ```text
 crates/
+  ember_esp_nn/  Ember KernelBackend implementation backed by ESP-NN
   esp_nn_sys/     Raw FFI bindings and native ESP-NN build script
 ```
 
@@ -19,12 +20,14 @@ crates/esp_nn_sys/vendor/esp-nn
 
 ## Status
 
+- `ember_esp_nn` is a `#![no_std]` backend crate for `ember-infer-core`.
+- `ember_esp_nn` currently provides the backend shape, feature forwarding, quantization helper, and operation stubs. Operation calls return `KernelError::InternalError` until the ESP-NN invoke logic is filled in.
 - `esp_nn_sys` builds ESP-NN into a static native library with `cc`.
 - Rust bindings are generated from ESP-NN headers with `bindgen`.
-- The crate is `#![no_std]`.
+- Both crates are `#![no_std]`.
 - ANSI, ESP32-S3, and ESP32-P4 source selections are supported.
 - The final native link is carried through Cargo metadata from the sys crate to downstream binaries.
-- `esp_nn_sys` is responsible for ESP-NN bindings; higher-level backend inference components should build on top of it.
+- `esp_nn_sys` is responsible for ESP-NN bindings; `ember_esp_nn` builds on top of it.
 
 ## Supported Backends
 
@@ -35,6 +38,15 @@ crates/esp_nn_sys/vendor/esp-nn
 | `esp32p4` | `riscv32imafc-unknown-none-elf` | `riscv32-esp-elf-gcc` | ANSI + ESP32-P4 optimized sources |
 
 If no feature is selected, `esp_nn_sys` builds the ANSI source set.
+
+`ember_esp_nn` forwards the hardware feature flags to `esp_nn_sys`:
+
+| Feature | Effect |
+| --- | --- |
+| `ansi` | Enables portable ANSI ESP-NN kernels through `esp_nn_sys/ansi` |
+| `esp32s3` | Enables ESP32-S3 optimized kernels through `esp_nn_sys/esp32s3` |
+| `esp32p4` | Enables ESP32-P4 optimized kernels through `esp_nn_sys/esp32p4` |
+| `assume-aligned` | Trust caller-provided buffers are already 16-byte aligned |
 
 ## Requirements
 
@@ -62,6 +74,8 @@ git submodule update --init --recursive
 
 ## Build Checks
 
+Do not suppress warnings with `#[allow(...)]` or equivalent crate-level lints. If a warning is expected during an incremental implementation phase, leave it visible and document why it is acceptable for that phase.
+
 ANSI on RISC-V:
 
 ```powershell
@@ -85,6 +99,30 @@ ESP32-P4 optimized sources:
 ```powershell
 cargo clippy -p esp_nn_sys --target riscv32imafc-unknown-none-elf --features esp32p4
 ```
+
+Ember backend checks:
+
+```powershell
+cargo check -p ember_esp_nn --target xtensa-esp32s3-none-elf --features esp32s3
+cargo check -p ember_esp_nn --target riscv32imafc-unknown-none-elf --features esp32p4
+cargo check -p ember_esp_nn --features ansi
+```
+
+ESP32-S3 hardware inference test:
+
+```powershell
+cargo build -p ember-infer-test
+cd tests\ember-infer-test
+cargo run
+```
+
+The test binary uses `EspBackend` with the sine model:
+
+```text
+models/sine.tflite
+```
+
+Output is emitted through defmt/RTT. The firmware prints sine `PASS` lines and reports the elapsed runtime when the inference test finishes.
 
 ## Build Logging
 

@@ -1,3 +1,12 @@
 [workspace]
 resolver = "2"
-members = ["crates/amber_esp_nn","crates/esp_nn_sys"]
+members = ["crates/ember_esp_nn", "crates/esp_nn_sys", "tests/ember-infer-test"]
+
+[profile.dev]
+opt-level = "s"
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+opt-level = "s"
+debug = 2
